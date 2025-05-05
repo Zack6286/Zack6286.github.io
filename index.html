@@ -1,43 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
   <title>Math Quest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #121212;
-      color: #fff;
-      font-family: sans-serif;
-      overflow: hidden;
-    }
-
-    #loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.5em;
-      color: #fff;
-    }
-
-    canvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-    }
+    body { margin: 0; background: #121212; }
+    canvas { width: 100vw; height: 100vh; display: block; }
   </style>
 </head>
 <body>
-  <div id="loading">🧠 Loading Math Quest...</div>
-  <script type="module">
-    import { main } from "./main.js";
-
-    main().then(() => {
-      document.getElementById("loading").style.display = "none";
-    });
-  </script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
