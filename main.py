@@ -1,130 +1,106 @@
-
 import pygame
 import random
-import sys
+import json
+import asyncio
+import os
 
 pygame.init()
-WIDTH, HEIGHT = 900, 700
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Math Quest: Online Edition")
-clock = pygame.time.Clock()
+pygame.mixer.init()
+
+# Load music
+pygame.mixer.music.load("music_madness.ogg")
+pygame.mixer.music.play(-1)
+
+# Load cat sprite (replace with actual image in assets)
+cat_image = pygame.image.load("cat_sprite.png")
+cat_image = pygame.transform.scale(cat_image, (100, 100))
+
+# Load scores
+SCORE_FILE = "scoreboard.json"
+def load_scores():
+    if os.path.exists(SCORE_FILE):
+        with open(SCORE_FILE, 'r') as f:
+            return json.load(f)
+    return {}
+
+def save_score(name, score):
+    scores = load_scores()
+    scores[name] = max(score, scores.get(name, 0))
+    with open(SCORE_FILE, 'w') as f:
+        json.dump(scores, f)
+
+# Setup display
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Math Quest")
 font = pygame.font.SysFont(None, 36)
 
-WHITE, BLACK = (255, 255, 255), (0, 0, 0)
-LIGHT_BLUE, GREEN, RED, GRAY = (173, 216, 230), (0, 255, 0), (255, 0, 0), (200, 200, 200)
-
-settings = {
-    "time_limit": 20,
-    "choices": 4,
-    "topics": {
-        "arithmetic": True,
-        "fractions": True,
-        "decimals": True,
-        "geometry": False,
-        "algebra": False
-    }
-}
-
-score, level, high_score = 0, 1, 0
-
-def post_score_online(name, score):
-    print(f"[ONLINE] Score posted: {name} - {score} (simulated)")
-
-def generate_arithmetic():
-    a, b = random.randint(10, 99), random.randint(1, 9)
-    op = random.choice(["+", "-", "*", "/"])
+# Ask question
+def ask_question(level):
+    max_num = level * 10
+    a = random.randint(1, max_num)
+    b = random.randint(1, max_num)
+    op = random.choice(["+", "-", "*"])
+    if op == "+":
+        answer = a + b
+    elif op == "-":
+        answer = a - b
+    else:
+        answer = a * b
     question = f"{a} {op} {b}"
-    return question, round(eval(question), 2)
-
-def generate_fraction():
-    a, b = random.randint(1, 9), random.randint(1, 9)
-    c, d = random.randint(1, 9), random.randint(1, 9)
-    question = f"{a}/{b} + {c}/{d}"
-    return question, round(a/b + c/d, 2)
-
-def generate_decimal():
-    a = round(random.uniform(0.1, 9.9), 1)
-    b = round(random.uniform(0.1, 9.9), 1)
-    op = random.choice(["+", "-", "*", "/"])
-    question = f"{a} {op} {b}"
-    try:
-        answer = round(eval(question), 2)
-    except ZeroDivisionError:
-        return generate_decimal()
     return question, answer
 
-def get_question():
-    generators = []
-    if settings["topics"]["arithmetic"]:
-        generators.append(generate_arithmetic)
-    if settings["topics"]["fractions"]:
-        generators.append(generate_fraction)
-    if settings["topics"]["decimals"]:
-        generators.append(generate_decimal)
-    gen = random.choice(generators)
-    return gen()
+# Draw text
+def draw_text(text, y):
+    surface = font.render(text, True, (255, 255, 255))
+    rect = surface.get_rect(center=(400, y))
+    screen.blit(surface, rect)
 
-def generate_choices(correct, total=4):
-    choices = [correct]
-    while len(choices) < total:
-        fake = round(correct + random.uniform(-10, 10), 2)
-        if fake not in choices:
-            choices.append(fake)
-    random.shuffle(choices)
-    return choices
+# Async game loop for browser
+async def main():
+    clock = pygame.time.Clock()
+    score = 0
+    level = 1
+    name = "Player"
 
-def draw_text(text, x, y, color=BLACK):
-    label = font.render(text, True, color)
-    screen.blit(label, (x, y))
-
-def main():
-    global score, level
     running = True
-    question, answer = get_question()
-    choices = generate_choices(answer, settings["choices"])
-    selected = None
-    timer = settings["time_limit"]
-    pygame.time.set_timer(pygame.USEREVENT, 1000)
+    input_text = ""
+    question, answer = ask_question(level)
 
     while running:
-        screen.fill(WHITE)
-        draw_text(f"Score: {score} | Level: {level}", 20, 20)
-        draw_text(f"Time Left: {timer}", WIDTH - 200, 20)
-        draw_text(f"Q: {question}", 100, 100)
+        screen.fill((20, 20, 40))
+        screen.blit(cat_image, (350, 100))
 
-        for i, choice in enumerate(choices):
-            color = LIGHT_BLUE if selected == i else GRAY
-            pygame.draw.rect(screen, color, (100, 200 + i * 80, 300, 50))
-            draw_text(str(choice), 120, 210 + i * 80)
+        draw_text(f"Score: {score}", 20)
+        draw_text(f"Level: {level}", 60)
+        draw_text(f"Question: {question}", 200)
+        draw_text(f"Answer: {input_text}", 250)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                break
-            if event.type == pygame.USEREVENT:
-                timer -= 1
-                if timer <= 0:
-                    running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = pygame.mouse.get_pos()
-                for i in range(len(choices)):
-                    if 100 <= mx <= 400 and 200 + i * 80 <= my <= 250 + i * 80:
-                        selected = i
-                        if choices[i] == answer:
-                            score += 10
-                            level += 1
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    try:
+                        if int(input_text.strip()) == answer:
+                            score += 1
+                            if score % 5 == 0:
+                                level += 1
                         else:
-                            score -= 5
-                        question, answer = get_question()
-                        choices = generate_choices(answer, settings["choices"])
-                        selected = None
-                        timer = settings["time_limit"]
+                            running = False
+                        question, answer = ask_question(level)
+                    except:
+                        pass
+                    input_text = ""
+                elif event.key == pygame.K_BACKSPACE:
+                    input_text = input_text[:-1]
+                else:
+                    input_text += event.unicode
 
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick(60)
+        await asyncio.sleep(0)
 
-    post_score_online("Player", score)
-    pygame.quit()
-    sys.exit()
+    save_score(name, score)
 
-main()
+# Launch async main for Pygbag
+asyncio.run(main())
