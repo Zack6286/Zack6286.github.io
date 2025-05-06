@@ -9,20 +9,26 @@ font = pygame.font.SysFont(None, 48)
 small_font = pygame.font.SysFont(None, 36)
 clock = pygame.time.Clock()
 
+# Function to generate random math questions
 def get_question():
+    # Generate random numbers and an operator
     a, b = random.randint(1, 12), random.randint(1, 12)
     op = random.choice(["+", "-", "*"])
+    
+    # Calculate the correct answer based on the operator
     if op == "+":
         ans = a + b
     elif op == "-":
         ans = a - b
     else:
         ans = a * b
+
+    # Return the question string and the answer
     q_text = f"{a} {op} {b}"
     return q_text, ans
 
 def main():
-    questions = 5
+    questions = 5  # Number of questions
     score = 0
     question_index = 0
     input_text = ""
