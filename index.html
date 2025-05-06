@@ -47,14 +47,21 @@
   </div>
 
   <script>
+    // Define your placeholder 'main' function
+    window.main = async function () {
+      console.log("Game initialized — placeholder JS loader (Pygbag handles Python)");
+    };
+  </script>
+
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Try to play loading sound
+      // Attempt to play loading sound
       const loadingSound = new Audio("assets/loading.ogg");
       loadingSound.play().catch(() => {
         console.warn("Autoplay prevented by browser.");
       });
 
-      // Load main game script
+      // Run the main function
       if (typeof window.main === "function") {
         window.main().then(() => {
           document.getElementById("loading").style.display = "none";
@@ -70,7 +77,5 @@
       }
     });
   </script>
-
-  <script src="main.js"></script>
 </body>
 </html>
