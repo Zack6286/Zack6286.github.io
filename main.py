@@ -1,7 +1,7 @@
-import asyncio
 import pygame
 import random
 import sys
+import asyncio
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -16,29 +16,23 @@ async def main():
     input_text = ""
     feedback = ""
     game_state = "ask"
-    current_q = ""
 
     def get_question():
         a, b = random.randint(1, 12), random.randint(1, 12)
         op = random.choice(["+", "-", "*"])
-        if op == "+":
-            ans = a + b
-        elif op == "-":
-            ans = a - b
-        else:
-            ans = a * b
-        q_text = f"{a} {op} {b}"
-        return q_text, ans
+        ans = eval(f"{a}{op}{b}")
+        return f"{a} {op} {b}", ans
 
     q_text, answer = get_question()
 
-    while True:
+    running = True
+    while running:
         screen.fill((30, 30, 30))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                running = False
+                break
             if game_state == "ask":
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
@@ -59,14 +53,12 @@ async def main():
                         input_text += event.unicode
 
         if game_state == "ask":
-            render_text = font.render(f"Q{question_index + 1}: {q_text}", True, (255, 255, 255))
-            screen.blit(render_text, (50, 100))
-
-            input_render = font.render(f"Your Answer: {input_text}", True, (255, 255, 0))
-            screen.blit(input_render, (50, 180))
-
-            feedback_render = font.render(feedback, True, (100, 255, 100))
-            screen.blit(feedback_render, (50, 260))
-
+            screen.blit(font.render(f"Q{question_index + 1}: {q_text}", True, (255, 255, 255)), (50, 100))
+            screen.blit(font.render(f"Your Answer: {input_text}", True, (255, 255, 0)), (50, 180))
+            screen.blit(font.render(feedback, True, (100, 255, 100)), (50, 260))
         elif game_state == "end":
-            end_text = font.render(f"You scored {score} out of {questions}!", True, (0, 200,_
+            screen.blit(font.render(f"You scored {score} out of {questions}!", True, (0, 200, 255)), (50, 240))
+
+        pygame.display.flip()
+        await asyncio.sleep(0)
+
