@@ -8,14 +8,13 @@ pygame.display.set_caption("Math Quest")
 font = pygame.font.SysFont(None, 48)
 clock = pygame.time.Clock()
 
-async def main():
+def main():
     questions = 5
     score = 0
     question_index = 0
     input_text = ""
     feedback = ""
     game_state = "ask"
-    current_q = ""
 
     def get_question():
         a, b = random.randint(1, 12), random.randint(1, 12)
@@ -73,3 +72,6 @@ async def main():
 
         pygame.display.flip()
         clock.tick(60)
+
+# Call the main game function
+main()
