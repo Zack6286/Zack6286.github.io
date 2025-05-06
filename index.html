@@ -12,6 +12,7 @@
       overflow: hidden;
       font-family: sans-serif;
     }
+
     #loading-container {
       position: absolute;
       top: 50%;
@@ -20,9 +21,16 @@
       text-align: center;
       color: white;
     }
+
+    #logo {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
     #loading {
       font-size: 1.4rem;
     }
+
     #error {
       color: red;
       font-size: 1rem;
@@ -33,15 +41,12 @@
 </head>
 <body>
   <div id="loading-container">
+    <img id="logo" src="assets/logo.png" alt="Math Quest Logo">
     <div id="loading">🧠 Loading Math Quest...</div>
     <div id="error">⚠️ Failed to load the game. Check the console.</div>
   </div>
-  <script>
-    const pygbag = document.createElement("script");
-    pygbag.src = "pygbag.js";
-    pygbag.onload = () => console.log("Pygbag loaded");
-    pygbag.onerror = () => document.getElementById("error").style.display = "block";
-    document.body.appendChild(pygbag);
-  </script>
+
+  <!-- Load main.js which will handle loading the Pygbag runtime -->
+  <script src="main.js"></script>
 </body>
 </html>
