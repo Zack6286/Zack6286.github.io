@@ -1,3 +1,1 @@
-// Placeholder Pygbag runtime loader
-console.log('Loaded pygbag.js — replace with actual pygbag.js for real game.');
-
+<script src="https://cdn.jsdelivr.net/npm/pygbag@latest/pygbag.js"></script>
