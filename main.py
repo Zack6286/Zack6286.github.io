@@ -30,6 +30,8 @@ def main():
     game_state = "ask"
     q_text, answer = get_question()
 
+    print("Game started!")
+
     while True:
         screen.fill((30, 30, 30))
 
@@ -62,16 +64,14 @@ def main():
                         if event.unicode.isdigit():
                             input_text += event.unicode
 
-        # Render UI
+        # Render
         if game_state == "ask":
             question_surf = font.render(f"Q{question_index + 1}: {q_text} =", True, (255, 255, 255))
             input_surf = font.render(input_text, True, (0, 255, 0))
             feedback_surf = small_font.render(feedback, True, (255, 255, 0))
-
             screen.blit(question_surf, (100, 150))
             screen.blit(input_surf, (100, 220))
             screen.blit(feedback_surf, (100, 280))
-
         elif game_state == "done":
             final_surf = font.render(f"You scored {score} out of {questions}!", True, (255, 255, 255))
             screen.blit(final_surf, (100, 250))
