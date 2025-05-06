@@ -48,11 +48,38 @@
 
   <!-- Load Scripts -->
   <script>
-    window.onload = () => {
+    window.onload = function() {
       const loadingText = document.getElementById("loading");
       const errorText = document.getElementById("error");
 
-      // Load pygbag.js dynamically
+      // Load pygbag.js script
       const pygbagScript = document.createElement("script");
-      pygbagScript.src = "pygbag.js";  // Ensure this path is correct!
-      pygbagScri
+      pygbagScript.src = "pygbag.js";  // Ensure the correct path here
+      pygbagScript.onload = function() {
+        console.log("Pygbag loaded.");
+        loadMainJS();  // Only load main.js after pygbag.js is loaded
+      };
+      pygbagScript.onerror = function() {
+        errorText.style.display = "block";
+        loadingText.style.display = "none";
+      };
+      document.body.appendChild(pygbagScript);
+
+      // Function to load main.js
+      function loadMainJS() {
+        const mainScript = document.createElement("script");
+        mainScript.src = "main.js"; // Ensure the correct path here
+        mainScript.onload = function() {
+          console.log("Main game loaded!");
+          loadingText.textContent = "🧠 Game is ready!";
+        };
+        mainScript.onerror = function() {
+          errorText.style.display = "block";
+          loadingText.style.display = "none";
+        };
+        document.body.appendChild(mainScript);
+      }
+    };
+  </script>
+</body>
+</html>
