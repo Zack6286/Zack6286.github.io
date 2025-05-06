@@ -12,7 +12,6 @@
       overflow: hidden;
       font-family: sans-serif;
     }
-
     #loading-container {
       position: absolute;
       top: 50%;
@@ -21,16 +20,9 @@
       text-align: center;
       color: white;
     }
-
-    #logo {
-      width: 200px;
-      margin-bottom: 20px;
-    }
-
     #loading {
       font-size: 1.4rem;
     }
-
     #error {
       color: red;
       font-size: 1rem;
@@ -41,45 +33,15 @@
 </head>
 <body>
   <div id="loading-container">
-    <img id="logo" src="assets/logo.png" alt="Math Quest Logo">
     <div id="loading">🧠 Loading Math Quest...</div>
     <div id="error">⚠️ Failed to load the game. Check the console.</div>
   </div>
-
-  <!-- Load Scripts -->
   <script>
-    window.onload = function() {
-      const loadingText = document.getElementById("loading");
-      const errorText = document.getElementById("error");
-
-      // Load pygbag.js script
-      const pygbagScript = document.createElement("script");
-      pygbagScript.src = "pygbag.js";  // Ensure the correct path here
-      pygbagScript.onload = function() {
-        console.log("Pygbag loaded.");
-        loadMainJS();  // Only load main.js after pygbag.js is loaded
-      };
-      pygbagScript.onerror = function() {
-        errorText.style.display = "block";
-        loadingText.style.display = "none";
-      };
-      document.body.appendChild(pygbagScript);
-
-      // Function to load main.js
-      function loadMainJS() {
-        const mainScript = document.createElement("script");
-        mainScript.src = "main.js"; // Ensure the correct path here
-        mainScript.onload = function() {
-          console.log("Main game loaded!");
-          loadingText.textContent = "🧠 Game is ready!";
-        };
-        mainScript.onerror = function() {
-          errorText.style.display = "block";
-          loadingText.style.display = "none";
-        };
-        document.body.appendChild(mainScript);
-      }
-    };
+    const pygbag = document.createElement("script");
+    pygbag.src = "pygbag.js";
+    pygbag.onload = () => console.log("Pygbag loaded");
+    pygbag.onerror = () => document.getElementById("error").style.display = "block";
+    document.body.appendChild(pygbag);
   </script>
 </body>
 </html>
