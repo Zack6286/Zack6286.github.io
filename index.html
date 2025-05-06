@@ -8,8 +8,9 @@
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #000;
+      background-color: black;
       overflow: hidden;
+      font-family: sans-serif;
     }
 
     #loading-container {
@@ -19,7 +20,6 @@
       transform: translate(-50%, -50%);
       text-align: center;
       color: white;
-      font-family: sans-serif;
     }
 
     #logo {
@@ -37,6 +37,10 @@
       display: none;
       margin-top: 1rem;
     }
+
+    canvas {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -46,36 +50,9 @@
     <div id="error">⚠️ Failed to load the game. Check the console.</div>
   </div>
 
-  <script>
-    // Define your placeholder 'main' function
-    window.main = async function () {
-      console.log("Game initialized — placeholder JS loader (Pygbag handles Python)");
-    };
-  </script>
+  <canvas id="canvas" width="800" height="600"></canvas>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Attempt to play loading sound
-      const loadingSound = new Audio("assets/loading.ogg");
-      loadingSound.play().catch(() => {
-        console.warn("Autoplay prevented by browser.");
-      });
-
-      // Run the main function
-      if (typeof window.main === "function") {
-        window.main().then(() => {
-          document.getElementById("loading").style.display = "none";
-        }).catch(err => {
-          console.error("Load failed:", err);
-          document.getElementById("loading").style.display = "none";
-          document.getElementById("error").style.display = "block";
-        });
-      } else {
-        console.error("window.main is not defined.");
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("error").style.display = "block";
-      }
-    });
-  </script>
+  <script src="pygbag/pygbag.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
