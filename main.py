@@ -6,11 +6,8 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Math Quest")
 font = pygame.font.SysFont(None, 48)
+small_font = pygame.font.SysFont(None, 36)
 clock = pygame.time.Clock()
-
-# Load sound effects (make sure these files exist in your project folder)
-correct_sound = pygame.mixer.Sound("correct.wav")
-wrong_sound = pygame.mixer.Sound("wrong.wav")
 
 def get_question():
     a, b = random.randint(1, 12), random.randint(1, 12)
@@ -44,12 +41,43 @@ def main():
             if game_state == "ask":
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        if input_text.strip().isdigit() and int(input_text.strip()) == answer:
-                            feedback = "Correct!"
-                            score += 1
-                            correct_sound.play()
+                        if input_text.strip().isdigit():
+                            if int(input_text.strip()) == answer:
+                                feedback = "✅ Correct!"
+                                score += 1
+                            else:
+                                feedback = f"❌ Wrong! Answer was {answer}"
+
+                            question_index += 1
+                            input_text = ""
+                            if question_index >= questions:
+                                game_state = "done"
+                            else:
+                                q_text, answer = get_question()
                         else:
-                            feedback = f"Wrong! Answer was {answer}"
-                            wrong_sound.play()
-                        question_index += 1
-                        input
+                            feedback = "Please enter a number."
+                    elif event.key == pygame.K_BACKSPACE:
+                        input_text = input_text[:-1]
+                    else:
+                        if event.unicode.isdigit():
+                            input_text += event.unicode
+
+        # Render UI
+        if game_state == "ask":
+            question_surf = font.render(f"Q{question_index + 1}: {q_text} =", True, (255, 255, 255))
+            input_surf = font.render(input_text, True, (0, 255, 0))
+            feedback_surf = small_font.render(feedback, True, (255, 255, 0))
+
+            screen.blit(question_surf, (100, 150))
+            screen.blit(input_surf, (100, 220))
+            screen.blit(feedback_surf, (100, 280))
+
+        elif game_state == "done":
+            final_surf = font.render(f"You scored {score} out of {questions}!", True, (255, 255, 255))
+            screen.blit(final_surf, (100, 250))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+if __name__ == "__main__":
+    main()
