@@ -12,90 +12,53 @@
       overflow: hidden;
     }
 
-    #loading {
-      color: white;
-      font-family: sans-serif;
+    #loading-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    #logo {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
+    #loading {
       font-size: 1.4rem;
     }
 
     #error {
       color: red;
-      font-family: sans-serif;
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       font-size: 1rem;
       display: none;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <div id="loading">🧠 Loading Math Quest...</div>
-  <div id="error">⚠️ Failed to load the game. Check the console.</div>
+  <div id="loading-container">
+    <img id="logo" src="assets/logo.png" alt="Math Quest Logo">
+    <div id="loading">🧠 Loading Math Quest...</div>
+    <div id="error">⚠️ Failed to load the game. Check the console.</div>
+  </div>
 
-  <script src="main.js"></script>
   <script>
-    window.main().then(() => {
-      document.getElementById("loading").style.display = "none";
-    }).catch((err) => {
-      console.error("Error loading Math Quest:", err);
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("error").style.display = "block";
+    const loadingSound = new Audio("assets/loading.ogg");
+    loadingSound.play().catch(() => {
+      console.log("Autoplay prevented (some browsers block it).");
     });
   </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Math Quest</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background-color: #000;
-      overflow: hidden;
-    }
-
-    #loading {
-      color: white;
-      font-family: sans-serif;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.4rem;
-    }
-
-    #error {
-      color: red;
-      font-family: sans-serif;
-      position: absolute;
-      top: 60%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1rem;
-      display: none;
-    }
-  </style>
-</head>
-<body>
-  <div id="loading">🧠 Loading Math Quest...</div>
-  <div id="error">⚠️ Failed to load the game. Check the console.</div>
 
   <script src="main.js"></script>
   <script>
     window.main().then(() => {
       document.getElementById("loading").style.display = "none";
-    }).catch((err) => {
-      console.error("Error loading Math Quest:", err);
+    }).catch(err => {
+      console.error("Load failed:", err);
       document.getElementById("loading").style.display = "none";
       document.getElementById("error").style.display = "block";
     });
