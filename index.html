@@ -47,21 +47,30 @@
   </div>
 
   <script>
-    const loadingSound = new Audio("assets/loading.ogg");
-    loadingSound.play().catch(() => {
-      console.log("Autoplay prevented (some browsers block it).");
+    document.addEventListener("DOMContentLoaded", () => {
+      // Try to play loading sound
+      const loadingSound = new Audio("assets/loading.ogg");
+      loadingSound.play().catch(() => {
+        console.warn("Autoplay prevented by browser.");
+      });
+
+      // Load main game script
+      if (typeof window.main === "function") {
+        window.main().then(() => {
+          document.getElementById("loading").style.display = "none";
+        }).catch(err => {
+          console.error("Load failed:", err);
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("error").style.display = "block";
+        });
+      } else {
+        console.error("window.main is not defined.");
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("error").style.display = "block";
+      }
     });
   </script>
 
   <script src="main.js"></script>
-  <script>
-    window.main().then(() => {
-      document.getElementById("loading").style.display = "none";
-    }).catch(err => {
-      console.error("Load failed:", err);
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("error").style.display = "block";
-    });
-  </script>
 </body>
 </html>
