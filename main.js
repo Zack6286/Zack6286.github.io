@@ -1,17 +1,11 @@
 window.main = async function () {
   console.log("Starting Math Quest...");
 
-  // Show canvas for the game
-  document.getElementById("canvas").style.display = "block";
-
-  // Simulate async setup (you can replace this with actual loading hooks if needed)
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // Hide loading UI
+  // Hide loading
   document.getElementById("loading").style.display = "none";
   document.getElementById("loading-container").style.display = "none";
 
-  console.log("Math Quest ready.");
+  console.log("Math Quest initialized.");
 };
 
 document.addEventListener("DOMContentLoaded", () => {
