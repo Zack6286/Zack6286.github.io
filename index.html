@@ -46,8 +46,13 @@
     <div id="error">⚠️ Failed to load the game. Check the console.</div>
   </div>
 
-  <!-- Load Pygbag runtime -->
-  <script src="pygbag.js"></script>
-  <script src="main.js"></script>
-</body>
-</html>
+  <!-- Load Scripts -->
+  <script>
+    window.onload = () => {
+      const loadingText = document.getElementById("loading");
+      const errorText = document.getElementById("error");
+
+      // Load pygbag.js dynamically
+      const pygbagScript = document.createElement("script");
+      pygbagScript.src = "pygbag.js";  // Ensure this path is correct!
+      pygbagScri
