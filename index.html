@@ -31,11 +31,18 @@
       font-size: 1.4rem;
     }
 
-    #error {
-      color: red;
+    #status {
       font-size: 1rem;
-      display: none;
       margin-top: 1rem;
+      color: yellow;
+    }
+
+    #status.error {
+      color: red;
+    }
+
+    #status.success {
+      color: lightgreen;
     }
   </style>
 </head>
@@ -43,10 +50,26 @@
   <div id="loading-container">
     <img id="logo" src="assets/logo.png" alt="Math Quest Logo">
     <div id="loading">🧠 Loading Math Quest...</div>
-    <div id="error">⚠️ Failed to load the game. Check the console.</div>
+    <div id="status">Initializing...</div>
   </div>
 
-  <!-- Load main.js which will handle loading the Pygbag runtime -->
-  <script src="main.js"></script>
+  <script>
+    const status = document.getElementById('status');
+
+    const script = document.createElement('script');
+    script.src = 'main.js';
+
+    script.onload = () => {
+      status.textContent = '✅ Game loaded successfully.';
+      status.className = 'success';
+    };
+
+    script.onerror = () => {
+      status.textContent = '❌ Failed to load the game. Please try again later.';
+      status.className = 'error';
+    };
+
+    document.body.appendChild(script);
+  </script>
 </body>
 </html>
