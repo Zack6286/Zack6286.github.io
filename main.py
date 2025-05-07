@@ -1,7 +1,9 @@
+# main.py
 import pygame
 import random
 import sys
 
+# Pygbag-specific: Only call this if it's supported
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Math Quest")
@@ -9,26 +11,20 @@ font = pygame.font.SysFont(None, 48)
 small_font = pygame.font.SysFont(None, 36)
 clock = pygame.time.Clock()
 
-# Function to generate random math questions
+# Generate a random math question and answer
 def get_question():
-    # Generate random numbers and an operator
     a, b = random.randint(1, 12), random.randint(1, 12)
     op = random.choice(["+", "-", "*"])
-    
-    # Calculate the correct answer based on the operator
     if op == "+":
         ans = a + b
     elif op == "-":
         ans = a - b
     else:
         ans = a * b
-
-    # Return the question string and the answer
-    q_text = f"{a} {op} {b}"
-    return q_text, ans
+    return f"{a} {op} {b}", ans
 
 def main():
-    questions = 5  # Number of questions
+    questions = 5
     score = 0
     question_index = 0
     input_text = ""
@@ -36,15 +32,16 @@ def main():
     game_state = "ask"
     q_text, answer = get_question()
 
-    print("Game started!")
+    print("✅ Math Quest started!")
 
-    while True:
+    running = True
+    while running:
         screen.fill((30, 30, 30))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                running = False
+                break
 
             if game_state == "ask":
                 if event.type == pygame.KEYDOWN:
@@ -55,7 +52,6 @@ def main():
                                 score += 1
                             else:
                                 feedback = f"❌ Wrong! Answer was {answer}"
-
                             question_index += 1
                             input_text = ""
                             if question_index >= questions:
@@ -80,5 +76,9 @@ def main():
         pygame.display.flip()
         clock.tick(60)
 
+    pygame.quit()
+    print("👋 Game ended.")
+
+# Only needed when running standalone — Pygbag auto-calls main
 if __name__ == "__main__":
     main()
