@@ -49,16 +49,29 @@
   <!-- Load pygbag -->
   <script src="pygbag.js"></script>
 
-  <!-- Load your main.py script using text/python -->
-  <script type="text/python" src="main.py"></script>
+  <!-- Embed Python using pygbag conventions -->
+  <script type="text/python">
+    import main
+  </script>
 
   <script>
-    window.onload = function () {
+    window.addEventListener("load", () => {
       const loadingMessage = document.getElementById('loading');
       const errorMessage = document.getElementById('error');
 
-      loadingMessage.textContent = '🧠 Game running!';
-    };
+      // Wait for pygbag runtime readiness
+      window.addEventListener("pygbag:ready", () => {
+        loadingMessage.textContent = '🧠 Game running!';
+      });
+
+      // Handle pygbag load failure (if any hook is available)
+      setTimeout(() => {
+        if (!window.pygbag) {
+          loadingMessage.style.display = 'none';
+          errorMessage.style.display = 'block';
+        }
+      }, 10000); // Timeout after 10 seconds
+    });
   </script>
 </body>
 </html>
