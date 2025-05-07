@@ -1,2 +1,6 @@
-placeholder
+{
+  "loadingMessage": "🔄 Loading game...",
+  "errorMessage": "❌ Failed to load the game."
+}
+
 
