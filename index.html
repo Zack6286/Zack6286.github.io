@@ -31,45 +31,51 @@
       font-size: 1.4rem;
     }
 
-    #status {
-      font-size: 1rem;
-      margin-top: 1rem;
-      color: yellow;
-    }
-
-    #status.error {
+    #error {
       color: red;
-    }
-
-    #status.success {
-      color: lightgreen;
+      font-size: 1rem;
+      display: none;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
   <div id="loading-container">
     <img id="logo" src="assets/logo.png" alt="Math Quest Logo">
-    <div id="loading">🧠 Loading Math Quest...</div>
-    <div id="status">Initializing...</div>
+    <div id="loading">🔄 Preparing to load...</div>
+    <div id="error">❌ Failed to load the game.</div>
   </div>
 
   <script>
-    const status = document.getElementById('status');
+    window.onload = function() {
+      const loadingMessage = document.getElementById('loading');
+      const errorMessage = document.getElementById('error');
 
-    const script = document.createElement('script');
-    script.src = 'main.js';
+      loadingMessage.textContent = '🔄 Loading Pygbag...';
 
-    script.onload = () => {
-      status.textContent = '✅ Game loaded successfully.';
-      status.className = 'success';
+      const pygbagScript = document.createElement('script');
+      pygbagScript.src = 'pygbag.js';
+
+      pygbagScript.onload = () => {
+        loadingMessage.textContent = '🧠 Starting Math Quest...';
+
+        // Bootstrapping the Python game
+        const mainPyScript = document.createElement('script');
+        mainPyScript.src = 'main.py';  // pygbag knows how to handle .py when loaded this way
+        mainPyScript.type = 'text/python';
+
+        document.body.appendChild(mainPyScript);
+
+        loadingMessage.textContent = '✅ Game running!';
+      };
+
+      pygbagScript.onerror = () => {
+        loadingMessage.textContent = '❌ Failed to load Pygbag.';
+        errorMessage.style.display = 'block';
+      };
+
+      document.body.appendChild(pygbagScript);
     };
-
-    script.onerror = () => {
-      status.textContent = '❌ Failed to load the game. Please try again later.';
-      status.className = 'error';
-    };
-
-    document.body.appendChild(script);
   </script>
 </body>
 </html>
