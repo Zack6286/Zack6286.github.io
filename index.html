@@ -37,6 +37,20 @@
       display: none;
       margin-top: 1rem;
     }
+
+    /* New general error container styles */
+    #general-errors {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: red;
+      font-size: 1.2rem;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -46,10 +60,15 @@
     <div id="error">❌ Failed to load the game.</div>
   </div>
 
-  <!-- Load pygbag -->
-  <script src="js/pygbag.js"></script>
+  <!-- New general errors container -->
+  <div id="general-errors"></div>
 
-  <!-- Link to main.js -->
+  <!-- Load pygbag -->
+  <script src="pygbag.js"></script>
+
+  <!-- Load your main.py script using text/python -->
+  <script type="text/python" src="main.py"></script>
+
   <script src="js/main.js"></script>
 </body>
 </html>
