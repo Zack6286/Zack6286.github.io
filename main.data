@@ -1,6 +1,5 @@
 {
-  "loadingMessage": "🔄 Loading game...",
-  "errorMessage": "❌ Failed to load the game."
+  "loadingMessage": "🎮 Preparing Math Quest...",
+  "errorMessage": "🚫 Oops! Something went wrong.",
+  "generalErrors": "Make sure your browser supports WebAssembly."
 }
-
-
