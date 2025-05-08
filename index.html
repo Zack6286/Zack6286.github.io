@@ -50,6 +50,27 @@
       border-radius: 5px;
       display: none;
     }
+
+    /* Progress bar for loading */
+    #progress-bar-container {
+      position: absolute;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 20px;
+      background-color: #444;
+      border-radius: 10px;
+      display: none;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0;
+      background-color: #00ff00;
+      border-radius: 10px;
+    }
+
   </style>
 </head>
 <body>
@@ -61,10 +82,73 @@
 
   <div id="general-errors"></div>
 
+  <!-- Progress Bar -->
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+
   <!-- Pygbag loader -->
   <script src="pygbag.js" defer></script>
 
   <!-- Main loader script -->
-  <script src="js/main.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let progressBar = document.getElementById("progress-bar");
+      let progressBarContainer = document.getElementById("progress-bar-container");
+      let loadingText = document.getElementById("loading");
+      let errorText = document.getElementById("error");
+      let generalErrors = document.getElementById("general-errors");
+
+      // Show progress bar
+      progressBarContainer.style.display = "block";
+
+      // This is where you will track the progress
+      let progress = 0;
+
+      // Simulate loading progress (this should be replaced with actual Pygbag loading events)
+      // You can use your game's specific progress events from pygbag.js
+      const loadGame = new Promise((resolve, reject) => {
+        let loadInterval = setInterval(function() {
+          if (progress < 100) {
+            progress += 5; // Update progress
+            progressBar.style.width = progress + "%";
+          } else {
+            clearInterval(loadInterval);
+            loadingText.innerHTML = "Loading complete!";
+            resolve();
+          }
+        }, 300); // Simulated loading process
+      });
+
+      loadGame.then(() => {
+        // Game loaded successfully
+        loadingText.innerHTML = "Game loaded!";
+        // You can now start the actual game loading process here (e.g., using pygbag)
+      }).catch((error) => {
+        // If an error occurs, show the error message
+        errorText.style.display = "block";
+        errorText.textContent = `❌ Error: ${error.message || 'Unknown error'}`;
+        generalErrors.style.display = "block";
+        generalErrors.textContent = "An error occurred while loading the game.";
+      });
+
+      // Error Handling with actual pygbag.js loading progress (Example)
+      window.addEventListener("pygbag_progress", (event) => {
+        // Update the progress bar based on the pygbag.js loading progress
+        if (event.detail && event.detail.progress) {
+          progressBar.style.width = event.detail.progress + "%";
+        }
+      });
+
+      // Listen for pygbag load failure or success
+      window.addEventListener("pygbag_error", (event) => {
+        generalErrors.style.display = "block";
+        generalErrors.textContent = `❌ ${event.detail.message}`;
+        errorText.style.display = "block";
+      });
+
+    });
+  </script>
+
 </body>
 </html>
