@@ -38,7 +38,6 @@
       margin-top: 1rem;
     }
 
-    /* New general error container styles */
     #general-errors {
       position: absolute;
       top: 10%;
@@ -60,15 +59,12 @@
     <div id="error">❌ Failed to load the game.</div>
   </div>
 
-  <!-- New general errors container -->
   <div id="general-errors"></div>
 
-  <!-- Load pygbag -->
-  <script src="pygbag.js"></script>
+  <!-- Pygbag loader -->
+  <script src="pygbag.js" defer></script>
 
-  <!-- Load your main.py script using text/python -->
-  <script type="text/python" src="main.py"></script>
-
-  <script src="js/main.js"></script>
+  <!-- Main loader script -->
+  <script src="js/main.js" defer></script>
 </body>
 </html>
