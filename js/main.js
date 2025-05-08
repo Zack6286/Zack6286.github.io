@@ -1,36 +1,45 @@
 window.addEventListener("load", () => {
   const loadingMessage = document.getElementById('loading');
   const errorMessage = document.getElementById('error');
+  const generalErrors = document.getElementById('general-errors');
 
-  // Fetch the main.data file (JSON format)
-  fetch('main.data')  // Assuming 'main.data' is a JSON file in the same directory
-    .then(response => response.json())  // Parse the response as JSON
+  // Attempt to fetch dynamic messages from main.data (JSON)
+  fetch('main.data')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("main.data not found");
+      }
+      return response.json();
+    })
     .then(data => {
-      // If the data contains the required keys, update the messages
-      loadingMessage.textContent = data.loadingMessage || '🔄 Loading game...';  // Default loading message
-      errorMessage.textContent = data.errorMessage || '❌ Failed to load the game.';  // Default error message
-
-      console.log('Game data loaded:', data);
+      // Update messages if values exist
+      loadingMessage.textContent = data.loadingMessage || '🔄 Loading game...';
+      errorMessage.textContent = data.errorMessage || '❌ Failed to load the game.';
+      if (data.generalErrors) {
+        generalErrors.textContent = data.generalErrors;
+        generalErrors.style.display = 'block';
+      }
+      console.log('✅ Game data loaded:', data);
     })
     .catch(err => {
-      // If fetching the data fails or JSON is malformed, show error
-      console.error("Error loading data:", err);
-      loadingMessage.style.display = 'none';  // Hide loading message if error occurs
-      errorMessage.style.display = 'block';  // Show error message
+      console.warn("⚠️ Could not load main.data:", err);
+      loadingMessage.textContent = '🔄 Loading game...';  // Default fallback
     });
 
-  // Event listener for when pygbag (game) is ready
+  // Show success message when Pygbag signals it's ready
   window.addEventListener("pygbag:ready", () => {
-    loadingMessage.textContent = '🧠 Game running!';  // Update loading message when game is ready
-    errorMessage.style.display = 'none';  // Hide error message when game is ready
+    loadingMessage.textContent = '🧠 Game running!';
+    errorMessage.style.display = 'none';
+    generalErrors.style.display = 'none';
   });
 
-  // Timeout to handle situations where pygbag might not load correctly
+  // Fallback timeout: Show error message if pygbag doesn't initialize
   setTimeout(() => {
-    if (!window.pygbag) {
-      // If pygbag is not loaded after 10 seconds, show error message
+    if (!window.pygbag || !window.pygbag.main) {
       loadingMessage.style.display = 'none';
-      errorMessage.style.display = 'block';  // Show error message
+      errorMessage.style.display = 'block';
+      generalErrors.textContent = '⚠️ Game engine failed to initialize.';
+      generalErrors.style.display = 'block';
     }
-  }, 10000);  // Timeout after 10 seconds
+  }, 10000); // 10-second timeout
 });
