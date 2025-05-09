@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Math Quest</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <script src="js/pygbag.js"></script> <!-- Load pygbag.js from the js folder -->
+  <script src="js/main.js"></script> <!-- Load your main.js from the js folder -->
   <style>
     html, body {
       margin: 0;
@@ -12,6 +13,8 @@
       background-color: black;
       height: 100%;
       overflow: hidden;
+      color: white;
+      font-family: sans-serif;
     }
 
     canvas {
@@ -27,92 +30,79 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: white;
-      font-family: sans-serif;
       text-align: center;
-    }
-
-    #loading img {
-      display: block;
-      margin: 0 auto 20px;
-    }
-
-    #loading span {
-      display: block;
       font-size: 1.2rem;
-      margin: 10px 0;
     }
 
-    /* Spinner animation */
-    .spinner {
-      margin: 0 auto;
-      border: 6px solid #ccc;
-      border-top: 6px solid #00ffcc;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
+    #error, #general-errors {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: red;
+      font-size: 1.2rem;
+      text-align: center;
+      display: none; /* Initially hidden */
     }
 
-    @keyframes spin {
-      0%   { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Progress bar styles */
-    .progress-container {
-      width: 250px;
-      height: 12px;
-      background-color: #333;
-      border-radius: 6px;
-      overflow: hidden;
-      margin: 15px auto 0;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: #00ffcc;
-      transition: width 0.4s ease;
+    #general-errors {
+      font-size: 1rem;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div id="loading">
-    <img src="logo.png" alt="Math Quest game logo" width="200" />
-    <div class="spinner"></div>
-    <span>Loading Math Quest...</span>
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-  </div>
+  <div id="loading">🔄 Loading Math Quest...</div>
+  <div id="error">❌ Failed to load the game.</div>
+  <div id="general-errors"></div> <!-- Will show general errors if they exist -->
 
-  <script src="https://cdn.jsdelivr.net/npm/pygbag@latest/pygbag.js"></script>
   <script>
-    // Fake progress increase until pygbag-ready
-    let progress = 0;
-    const progressBar = document.getElementById("progressBar");
+    // Hide loading message when game starts
+    window.addEventListener("load", function () {
+      const loadingMessage = document.getElementById('loading');
+      const errorMessage = document.getElementById('error');
+      const generalErrors = document.getElementById('general-errors');
 
-    const interval = setInterval(() => {
-      if (progress < 95) {
-        progress += Math.random() * 5;
-        progressBar.style.width = `${Math.min(progress, 95)}%`;
-      }
-    }, 300);
+      // Attempt to fetch dynamic messages from main.data (JSON)
+      fetch('main.data')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("main.data not found");
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Update messages if values exist
+          loadingMessage.textContent = data.loadingMessage || '🔄 Loading game...';
+          errorMessage.textContent = data.errorMessage || '❌ Failed to load the game.';
+          if (data.generalErrors) {
+            generalErrors.textContent = data.generalErrors;
+            generalErrors.style.display = 'block';
+          }
+          console.log('✅ Game data loaded:', data);
+        })
+        .catch(err => {
+          console.warn("⚠️ Could not load main.data:", err);
+          loadingMessage.textContent = '🔄 Loading game...';  // Default fallback
+        });
 
-    // Hide loading screen when pygbag is ready
-    const hideLoading = () => {
-      clearInterval(interval);
-      progressBar.style.width = '100%';
+      // Show success message when Pygbag signals it's ready
+      window.addEventListener("pygbag:ready", () => {
+        loadingMessage.textContent = '🧠 Game running!';
+        errorMessage.style.display = 'none';
+        generalErrors.style.display = 'none';
+      });
+
+      // Fallback timeout: Show error message if pygbag doesn't initialize
       setTimeout(() => {
-        document.getElementById("loading").style.display = "none";
-      }, 500);
-    };
-
-    window.addEventListener("pygbag-ready", hideLoading);
-
-    // Fallback: Hide after 10 seconds if no event fires
-    setTimeout(hideLoading, 10000);
+        if (!window.pygbag || !window.pygbag.main) {
+          loadingMessage.style.display = 'none';
+          errorMessage.style.display = 'block';
+          generalErrors.textContent = '⚠️ Game engine failed to initialize.';
+          generalErrors.style.display = 'block';
+        }
+      }, 10000); // 10-second timeout
+    });
   </script>
 </body>
 </html>
