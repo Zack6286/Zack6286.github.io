@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Math Quest</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <style>
     html, body {
       margin: 0;
@@ -31,29 +32,87 @@
       text-align: center;
     }
 
+    #loading img {
+      display: block;
+      margin: 0 auto 20px;
+    }
+
     #loading span {
       display: block;
       font-size: 1.2rem;
-      margin-top: 10px;
+      margin: 10px 0;
+    }
+
+    /* Spinner animation */
+    .spinner {
+      margin: 0 auto;
+      border: 6px solid #ccc;
+      border-top: 6px solid #00ffcc;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Progress bar styles */
+    .progress-container {
+      width: 250px;
+      height: 12px;
+      background-color: #333;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 15px auto 0;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #00ffcc;
+      transition: width 0.4s ease;
     }
   </style>
 </head>
 <body>
   <div id="loading">
-    <img src="logo.png" alt="Math Quest Logo" width="200" />
+    <img src="logo.png" alt="Math Quest game logo" width="200" />
+    <div class="spinner"></div>
     <span>Loading Math Quest...</span>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
   </div>
 
-  <script src="pygbag.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pygbag@latest/pygbag.js"></script>
   <script>
-    // Hide loading message when game starts
-    window.addEventListener("load", function () {
-      const hide = () => {
+    // Fake progress increase until pygbag-ready
+    let progress = 0;
+    const progressBar = document.getElementById("progressBar");
+
+    const interval = setInterval(() => {
+      if (progress < 95) {
+        progress += Math.random() * 5;
+        progressBar.style.width = `${Math.min(progress, 95)}%`;
+      }
+    }, 300);
+
+    // Hide loading screen when pygbag is ready
+    const hideLoading = () => {
+      clearInterval(interval);
+      progressBar.style.width = '100%';
+      setTimeout(() => {
         document.getElementById("loading").style.display = "none";
-      };
-      // Try hiding after pygbag boot
-      setTimeout(hide, 5000);
-    });
+      }, 500);
+    };
+
+    window.addEventListener("pygbag-ready", hideLoading);
+
+    // Fallback: Hide after 10 seconds if no event fires
+    setTimeout(hideLoading, 10000);
   </script>
 </body>
 </html>
