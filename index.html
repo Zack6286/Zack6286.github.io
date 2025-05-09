@@ -2,146 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Math Quest</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       background-color: black;
+      height: 100%;
       overflow: hidden;
-      font-family: sans-serif;
     }
 
-    #loading-container {
+    canvas {
+      display: block;
+      margin: auto;
+      width: 100vw;
+      height: 100vh;
+      touch-action: manipulation;
+    }
+
+    #loading {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      text-align: center;
       color: white;
+      font-family: sans-serif;
+      text-align: center;
     }
 
-    #logo {
-      width: 200px;
-      margin-bottom: 20px;
-    }
-
-    #loading {
-      font-size: 1.4rem;
-    }
-
-    #error {
-      color: red;
-      font-size: 1rem;
-      display: none;
-      margin-top: 1rem;
-    }
-
-    #general-errors {
-      position: absolute;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      color: red;
+    #loading span {
+      display: block;
       font-size: 1.2rem;
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 10px;
-      border-radius: 5px;
-      display: none;
+      margin-top: 10px;
     }
-
-    /* Progress bar for loading */
-    #progress-bar-container {
-      position: absolute;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60%;
-      height: 20px;
-      background-color: #444;
-      border-radius: 10px;
-      display: none;
-    }
-
-    #progress-bar {
-      height: 100%;
-      width: 0;
-      background-color: #00ff00;
-      border-radius: 10px;
-    }
-
   </style>
 </head>
 <body>
-  <div id="loading-container">
-    <img id="logo" src="assets/logo.png" alt="Math Quest Logo">
-    <div id="loading">🔄 Loading game...</div>
-    <div id="error">❌ Failed to load the game.</div>
+  <div id="loading">
+    <img src="logo.png" alt="Math Quest Logo" width="200" />
+    <span>Loading Math Quest...</span>
   </div>
 
-  <div id="general-errors"></div>
-
-  <!-- Progress Bar -->
-  <div id="progress-bar-container">
-    <div id="progress-bar"></div>
-  </div>
-
-  <!-- Pygbag loader -->
-  <script src="pygbag.js" defer></script>
-
-  <!-- Main loader script -->
+  <script src="pygbag.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      let progressBar = document.getElementById("progress-bar");
-      let progressBarContainer = document.getElementById("progress-bar-container");
-      let loadingText = document.getElementById("loading");
-      let errorText = document.getElementById("error");
-      let generalErrors = document.getElementById("general-errors");
-
-      // Show progress bar
-      progressBarContainer.style.display = "block";
-
-      // Ensure pygbag is loaded
-      if (typeof pygbag !== "undefined") {
-        // Initialize pygbag and load the game
-        try {
-          pygbag.loadGame().then(() => {
-            // On successful game load
-            loadingText.innerHTML = "Game loaded!";
-            console.log("Game loaded successfully!");
-          }).catch((error) => {
-            // On error loading the game
-            errorText.style.display = "block";
-            errorText.textContent = `❌ Error: ${error.message || 'Unknown error'}`;
-            generalErrors.style.display = "block";
-            generalErrors.textContent = "An error occurred while loading the game.";
-          });
-
-          // Update progress bar during loading
-          pygbag.onProgress = function (progress) {
-            progressBar.style.width = progress + "%";
-            if (progress >= 100) {
-              loadingText.innerHTML = "Loading complete!";
-            }
-          };
-
-        } catch (error) {
-          // Handle any unexpected errors
-          errorText.style.display = "block";
-          errorText.textContent = `❌ Error: ${error.message || 'Unknown error'}`;
-          generalErrors.style.display = "block";
-          generalErrors.textContent = "An error occurred while starting the game load.";
-        }
-      } else {
-        // Handle the case when pygbag is not defined
-        errorText.style.display = "block";
-        errorText.textContent = "❌ pygbag is not defined. Please check the pygbag.js script.";
-        generalErrors.style.display = "block";
-        generalErrors.textContent = "An error occurred while trying to load the game.";
-      }
+    // Hide loading message when game starts
+    window.addEventListener("load", function () {
+      const hide = () => {
+        document.getElementById("loading").style.display = "none";
+      };
+      // Try hiding after pygbag boot
+      setTimeout(hide, 5000);
     });
   </script>
-
 </body>
 </html>
