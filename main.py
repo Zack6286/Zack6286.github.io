@@ -1,8 +1,9 @@
+import asyncio
 import pygame
 import random
 import sys
 
-# Initialize
+# Initialize Pygame
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Math Quest")
@@ -10,19 +11,19 @@ font = pygame.font.Font(None, 48)
 small_font = pygame.font.Font(None, 36)
 clock = pygame.time.Clock()
 
-def get_question():
+async def get_question():
     a, b = random.randint(1, 12), random.randint(1, 12)
     op = random.choice(["+", "-", "*"])
     ans = eval(f"{a}{op}{b}")
     return f"{a} {op} {b}", ans
 
-def draw_rotated_text(text, x, y, font, color, angle):
+async def draw_rotated_text(text, x, y, font, color, angle):
     surface = font.render(text, True, color)
     rotated = pygame.transform.rotate(surface, angle)
     rect = rotated.get_rect(center=(x, y))
     screen.blit(rotated, rect)
 
-def title_screen():
+async def title_screen():
     while True:
         screen.fill((0, 0, 0))
         title = font.render("🎮 Math Quest", True, (255, 255, 255))
@@ -41,13 +42,14 @@ def title_screen():
                 return
 
         pygame.display.flip()
+        await asyncio.sleep(0)
         clock.tick(30)
 
-def main():
+async def main():
     high_score = 0
 
     while True:
-        title_screen()
+        await title_screen()
 
         level = 1
         score = 0
@@ -55,7 +57,7 @@ def main():
         max_levels = 10
         question_count = 0
 
-        current_question, correct_answer = get_question()
+        current_question, correct_answer = await get_question()
         user_answer = ''
         game_over = False
         feedback_timer = 0
@@ -90,7 +92,7 @@ def main():
                                     high_score = max(score, high_score)
                                     continue
 
-                            current_question, correct_answer = get_question()
+                            current_question, correct_answer = await get_question()
                             user_answer = ''
                         except ValueError:
                             pass
@@ -111,7 +113,7 @@ def main():
                 screen.blit(small_font.render(f"Question {question_count+1}/{questions_per_level}", True, (180, 180, 180)), (10, 40))
 
                 if level >= 5:
-                    draw_rotated_text(current_question, 400, 200, font, (255, 255, 255), 180)
+                    await draw_rotated_text(current_question, 400, 200, font, (255, 255, 255), 180)
                 else:
                     screen.blit(font.render(current_question, True, (255, 255, 255)), (350, 200))
 
@@ -120,10 +122,6 @@ def main():
                 if feedback_timer > 0:
                     sym = "✔" if feedback_color == (0, 255, 0) else "✘"
                     screen.blit(small_font.render(sym, True, feedback_color), (400, 320))
-                    feedback_timer -= 1
-
-            pygame.display.flip()
-            clock.tick(30)
-
-if __name__ == "__main__":
-    main()
+                    feedback_timer -= 
+::contentReference[oaicite:18]{index=18}
+ 
