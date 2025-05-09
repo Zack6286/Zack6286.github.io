@@ -1,108 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Math Quest</title>
-  <script src="js/pygbag.js"></script> <!-- Load pygbag.js first -->
-<script src="js/main.js"></script>  <!-- Then load your game script -->
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background-color: black;
-      height: 100%;
-      overflow: hidden;
-      color: white;
-      font-family: sans-serif;
-    }
-
-    canvas {
-      display: block;
-      margin: auto;
-      width: 100vw;
-      height: 100vh;
-      touch-action: manipulation;
-    }
-
-    #loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      font-size: 1.2rem;
-    }
-
-    #error, #general-errors {
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      color: red;
-      font-size: 1.2rem;
-      text-align: center;
-      display: none; /* Initially hidden */
-    }
-
-    #general-errors {
-      font-size: 1rem;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <div id="loading">🔄 Loading Math Quest...</div>
-  <div id="error">❌ Failed to load the game.</div>
-  <div id="general-errors"></div> <!-- Will show general errors if they exist -->
-
-  <script>
-    // Hide loading message when game starts
-    window.addEventListener("load", function () {
-      const loadingMessage = document.getElementById('loading');
-      const errorMessage = document.getElementById('error');
-      const generalErrors = document.getElementById('general-errors');
-
-      // Attempt to fetch dynamic messages from main.data (JSON)
-      fetch('main.data')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("main.data not found");
-          }
-          return response.json();
-        })
-        .then(data => {
-          // Update messages if values exist
-          loadingMessage.textContent = data.loadingMessage || '🔄 Loading game...';
-          errorMessage.textContent = data.errorMessage || '❌ Failed to load the game.';
-          if (data.generalErrors) {
-            generalErrors.textContent = data.generalErrors;
-            generalErrors.style.display = 'block';
-          }
-          console.log('✅ Game data loaded:', data);
-        })
-        .catch(err => {
-          console.warn("⚠️ Could not load main.data:", err);
-          loadingMessage.textContent = '🔄 Loading game...';  // Default fallback
-        });
-
-      // Show success message when Pygbag signals it's ready
-      window.addEventListener("pygbag:ready", () => {
-        loadingMessage.textContent = '🧠 Game running!';
-        errorMessage.style.display = 'none';
-        generalErrors.style.display = 'none';
-      });
-
-      // Fallback timeout: Show error message if pygbag doesn't initialize
-      setTimeout(() => {
-        if (!window.pygbag || !window.pygbag.main) {
-          loadingMessage.style.display = 'none';
-          errorMessage.style.display = 'block';
-          generalErrors.textContent = '⚠️ Game engine failed to initialize.';
-          generalErrors.style.display = 'block';
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quest</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+            height: 100%;
+            overflow: hidden;
         }
-      }, 10000); // 10-second timeout
-    });
-  </script>
+
+        canvas {
+            display: block;
+            margin: auto;
+            width: 100vw;
+            height: 100vh;
+            touch-action: manipulation;
+        }
+
+        #loading,
+        #error,
+        #general-errors {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        #loading span,
+        #error span,
+        #general-errors span {
+            display: block;
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
+
+        #general-errors {
+            font-size: 1rem;
+            color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Message -->
+    <div id="loading">
+        <img src="logo.png" alt="Math Quest Logo" width="200" />
+        <span>🔄 Loading game...</span>
+    </div>
+
+    <!-- Error Message -->
+    <div id="error" style="display: none;">
+        <span>❌ Game engine failed to load!</span>
+    </div>
+
+    <!-- General Errors -->
+    <div id="general-errors" style="display: none;">
+        <span>⚠️ Some errors occurred!</span>
+    </div>
+
+    <!-- Importing Pygbag -->
+    <script src="https://cdn.jsdelivr.net/npm/pygbag@0.1.0/pygbag.js"></script>
+
+    <!-- Your Game Script -->
+    <script src="js/main.js"></script>
+
 </body>
+
 </html>
