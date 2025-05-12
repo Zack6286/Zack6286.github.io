@@ -1,134 +1,78 @@
-import asyncio
-import pygame
-import random
-import sys
+<!DOCTYPE html>
+<html lang="en">
 
-# Initialize Pygame
-pygame.init()
-screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Math Quest")
-font = pygame.font.Font(None, 48)
-small_font = pygame.font.Font(None, 36)
-clock = pygame.time.Clock()
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quest</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: white;
+            height: 100%;
+            overflow: hidden;
+        }
 
-def get_question():
-    a, b = random.randint(1, 12), random.randint(1, 12)
-    op = random.choice(["+", "-", "*"])
-    ans = eval(f"{a}{op}{b}")
-    return f"{a} {op} {b}", ans
+        canvas {
+            display: block;
+            margin: auto;
+            width: 100vw;
+            height: 100vh;
+            touch-action: manipulation;
+        }
 
-def draw_rotated_text(text, x, y, font, color, angle):
-    surface = font.render(text, True, color)
-    rotated = pygame.transform.rotate(surface, angle)
-    rect = rotated.get_rect(center=(x, y))
-    screen.blit(rotated, rect)
+        #loading,
+        #error,
+        #general-errors {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: sans-serif;
+            text-align: center;
+        }
 
-async def title_screen():
-    while True:
-        screen.fill((0, 0, 0))
-        title = font.render("🎮 Math Quest", True, (255, 255, 255))
-        screen.blit(title, (280, 150))
+        #loading span,
+        #error span,
+        #general-errors span {
+            display: block;
+            font-size: 1.5rem;
+            margin-top: 10px;
+        }
 
-        prompt = small_font.render("Press Enter or Tap to Start", True, (200, 200, 200))
-        screen.blit(prompt, (240, 300))
+        #general-errors {
+            font-size: 1rem;
+            color: yellow;
+        }
+    </style>
+</head>
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                return
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                return
+<body>
+    <!-- Loading Message -->
+    <div id="loading">
+        <img src="logo.png" alt="Math Quest Logo" width="200" />
+        <span>🔄 Loading game...</span>
+    </div>
 
-        pygame.display.flip()
-        await asyncio.sleep(0)
-        clock.tick(30)
+    <!-- Error Message -->
+    <div id="error" style="display: none;">
+        <span>❌ Game engine failed to load!</span>
+    </div>
 
-async def main():
-    high_score = 0
+    <!-- General Errors -->
+    <div id="general-errors" style="display: none;">
+        <span>⚠️ Some errors occurred!</span>
+    </div>
 
-    while True:
-        await title_screen()
+    <!-- Importing Pygbag -->
+    <script src="https://cdn.jsdelivr.net/npm/pygbag@0.1.0/pygbag.js"></script>
 
-        level = 1
-        score = 0
-        questions_per_level = 5
-        max_levels = 10
-        question_count = 0
+    <!-- Your Game Script -->
+    <script src="js/main.js"></script>
 
-        current_question, correct_answer = get_question()
-        user_answer = ''
-        game_over = False
-        feedback_timer = 0
-        feedback_color = (255, 255, 255)
+</body>
 
-        while True:
-            screen.fill((30, 30, 30))
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    if game_over:
-                        if event.key == pygame.K_RETURN:
-                            break
-                    elif event.key == pygame.K_RETURN:
-                        try:
-                            if int(user_answer) == correct_answer:
-                                score += 1
-                                feedback_color = (0, 255, 0)
-                            else:
-                                feedback_color = (255, 0, 0)
-                            feedback_timer = 30
-
-                            question_count += 1
-                            if question_count >= questions_per_level:
-                                level += 1
-                                question_count = 0
-                                if level > max_levels:
-                                    game_over = True
-                                    high_score = max(score, high_score)
-                                    continue
-
-                            current_question, correct_answer = get_question()
-                            user_answer = ''
-                        except ValueError:
-                            pass
-                    elif event.key == pygame.K_BACKSPACE:
-                        user_answer = user_answer[:-1]
-                    elif event.unicode.isdigit() or (event.unicode == '-' and len(user_answer) == 0):
-                        user_answer += event.unicode
-                elif event.type == pygame.MOUSEBUTTONDOWN and game_over:
-                    break
-
-            if game_over:
-                screen.blit(font.render("Game Over!", True, (255, 255, 255)), (300, 200))
-                screen.blit(small_font.render(f"Score: {score}/{questions_per_level * max_levels}", True, (200, 200, 200)), (270, 260))
-                screen.blit(small_font.render(f"High Score: {high_score}", True, (255, 215, 0)), (290, 300))
-                screen.blit(small_font.render("Press Enter or Tap to Restart", True, (200, 200, 200)), (230, 350))
-            else:
-                screen.blit(small_font.render(f"Level {level}", True, (200, 200, 255)), (10, 10))
-                screen.blit(small_font.render(f"Question {question_count+1}/{questions_per_level}", True, (180, 180, 180)), (10, 40))
-
-                if level >= 5:
-                    draw_rotated_text(current_question, 400, 200, font, (255, 255, 255), 180)
-                else:
-                    screen.blit(font.render(current_question, True, (255, 255, 255)), (350, 200))
-
-                screen.blit(font.render(user_answer, True, (200, 200, 0)), (350, 260))
-
-                if feedback_timer > 0:
-                    sym = "✔" if feedback_color == (0, 255, 0) else "✘"
-                    screen.blit(small_font.render(sym, True, feedback_color), (400, 320))
-                    feedback_timer -= 1
-
-            pygame.display.flip()
-            await asyncio.sleep(0)
-            clock.tick(30)
-
-# Entry point for pygbag (asynchronous)
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+</html>
